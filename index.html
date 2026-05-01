@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All About Joshua</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Welcome Screen -->
+        <section id="welcome" class="screen active">
+            <div class="content">
+                <h1>Welcome to the Joshua Experience</h1>
+                <p class="subtitle">Answer some questions and see how well you know Joshua!</p>
+                <div class="input-group">
+                    <label for="playerName">Enter your name:</label>
+                    <input type="text" id="playerName" placeholder="Your name here..." maxlength="30" required>
+                </div>
+                <button id="startBtn" class="btn primary">Let's Go!</button>
+            </div>
+        </section>
+
+        <!-- Question Screens -->
+        <section id="question-1" class="screen question-screen" data-question="1">
+            <div class="content">
+                <span class="question-number">Question 1</span>
+                <h2>Is Joshua a great guy?</h2>
+                <div class="options">
+                    <button class="btn option" data-value="yes">Yes</button>
+                    <button class="btn option" data-value="no">No</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="question-2" class="screen question-screen" data-question="2">
+            <div class="content">
+                <span class="question-number">Question 2</span>
+                <h2>Does Joshua admire CDPC Puchong or CDPC Subang?</h2>
+                <div class="options">
+                    <button class="btn option" data-value="CDPC Puchong">CDPC Puchong</button>
+                    <button class="btn option" data-value="CDPC Subang">CDPC Subang</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="question-3" class="screen question-screen" data-question="3">
+            <div class="content">
+                <span class="question-number">Question 3</span>
+                <h2>Is Joshua a good looking guy?</h2>
+                <div class="options">
+                    <button class="btn option" data-value="yes">Yes</button>
+                    <button class="btn option" data-value="no">No</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="question-4" class="screen question-screen" data-question="4">
+            <div class="content">
+                <span class="question-number">Question 4</span>
+                <h2>Will Joshua be able to speak in tongues this year?</h2>
+                <div class="options">
+                    <button class="btn option" data-value="yes">Yes</button>
+                    <button class="btn option" data-value="no">No</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="question-5" class="screen question-screen" data-question="5">
+            <div class="content">
+                <span class="question-number">Question 5</span>
+                <h2>Is Joshua a prophet or a healer?</h2>
+                <div class="options">
+                    <button class="btn option" data-value="prophet">Prophet</button>
+                    <button class="btn option" data-value="healer">Healer</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- GIF Response Screen -->
+        <section id="gif-response" class="screen gif-screen">
+            <div class="gif-container">
+                <img id="responseGif" src="" alt="Reaction GIF">
+                <p id="responseText"></p>
+                <p id="pointsEarned"></p>
+                <button id="nextBtn" class="btn primary">Next Question</button>
+                <button id="finishBtn" class="btn primary hidden">See Leaderboard</button>
+            </div>
+        </section>
+
+        <!-- Loading Screen -->
+        <section id="loading" class="screen loading-screen">
+            <div class="content">
+                <div class="spinner"></div>
+                <p>Loading...</p>
+            </div>
+        </section>
+
+        <!-- Leaderboard Screen -->
+        <section id="leaderboard" class="screen leaderboard-screen">
+            <div class="content">
+                <h2>Leaderboard</h2>
+                <p class="subtitle">See how everyone scored!</p>
+                <table id="leaderboardTable">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Name</th>
+                            <th>Score</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboardBody">
+                    </tbody>
+                </table>
+                <button id="playAgainBtn" class="btn primary">Play Again</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- Config -->
+    <script src="config.js"></script>
+    
+    <!-- App Logic -->
+    <script src="app.js"></script>
+</body>
+</html>

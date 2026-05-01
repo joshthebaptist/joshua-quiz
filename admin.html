@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joshua - Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-container {
+            max-width: 900px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .admin-container h1 {
+            color: #764ba2;
+            margin-bottom: 1rem;
+        }
+
+        .admin-container h2 {
+            color: #5a3d8a;
+            font-size: 1.2rem;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .player-card {
+            background: #f8f5ff;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #764ba2;
+        }
+
+        .player-card h3 {
+            color: #764ba2;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .player-score {
+            background: #764ba2;
+            color: #fff;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .answer-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .answer-item:last-child {
+            border-bottom: none;
+        }
+
+        .answer-correct {
+            color: #22c55e;
+            font-weight: 600;
+        }
+
+        .answer-wrong {
+            color: #ef4444;
+            font-weight: 600;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .stat-card .label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .login-section {
+            max-width: 400px;
+        }
+
+        .login-section input {
+            margin-bottom: 1rem;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        #allAnswersTable {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        #allAnswersTable th,
+        #allAnswersTable td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+
+        #allAnswersTable th {
+            background: #764ba2;
+            color: #fff;
+        }
+
+        .export-btn {
+            background: #22c55e;
+            color: #fff;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        .export-btn:hover {
+            background: #16a34a;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            background: #eee;
+            color: #666;
+        }
+
+        .tab-btn.active {
+            background: #764ba2;
+            color: #fff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <section id="loginScreen" class="screen active">
+            <div class="content login-section">
+                <h1>Admin Dashboard</h1>
+                <p class="subtitle">Only Joshua can access this</p>
+                <div class="input-group">
+                    <label for="adminCode">Enter Admin Code:</label>
+                    <input type="password" id="adminCode" placeholder="Admin code" required>
+                </div>
+                <button id="loginBtn" class="btn primary">Access Dashboard</button>
+                <p id="loginError" class="hidden" style="color: #ef4444; margin-top: 1rem;">Incorrect code. Try again.</p>
+            </div>
+        </section>
+
+        <section id="dashboardScreen" class="screen">
+            <div class="admin-container">
+                <h1>Joshua's Admin Dashboard</h1>
+                <p style="color: #666; margin-bottom: 1.5rem;">See how everyone answered each question</p>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="value" id="totalPlayers">0</div>
+                        <div class="label">Total Players</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="value" id="avgScore">0</div>
+                        <div class="label">Avg Score</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="value" id="highestScore">0</div>
+                        <div class="label">Highest Score</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="value" id="perfectScores">0</div>
+                        <div class="label">Perfect Scores</div>
+                    </div>
+                </div>
+
+                <div class="tab-buttons">
+                    <button class="tab-btn active" data-tab="detailed">Detailed Answers</button>
+                    <button class="tab-btn" data-tab="summary">Summary Table</button>
+                </div>
+
+                <div id="detailedTab" class="tab-content active">
+                    <div id="playerCards">
+                        <p style="color: #666;">Loading...</p>
+                    </div>
+                </div>
+
+                <div id="summaryTab" class="tab-content">
+                    <table id="allAnswersTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Q1</th>
+                                <th>Q2</th>
+                                <th>Q3</th>
+                                <th>Q4</th>
+                                <th>Q5</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="summaryBody">
+                        </tbody>
+                    </table>
+                </div>
+
+                <button id="refreshBtn" class="export-btn" style="background: #764ba2;">Refresh Data</button>
+                <button id="exportBtn" class="export-btn">Export as CSV</button>
+                <button id="logoutBtn" class="btn primary" style="margin-top: 1rem; background: #ef4444; color: #fff;">Logout</button>
+            </div>
+        </section>
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+        // ADMIN CODE - Change this to your own secret code
+        const ADMIN_CODE = 'joshua2026';
+
+        // DOM Elements
+        const loginScreen = document.getElementById('loginScreen');
+        const dashboardScreen = document.getElementById('dashboardScreen');
+        const adminCodeInput = document.getElementById('adminCode');
+        const loginBtn = document.getElementById('loginBtn');
+        const loginError = document.getElementById('loginError');
+        const playerCards = document.getElementById('playerCards');
+        const summaryBody = document.getElementById('summaryBody');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const exportBtn = document.getElementById('exportBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById(this.dataset.tab + 'Tab').classList.add('active');
+            });
+        });
+
+        // Login
+        loginBtn.addEventListener('click', () => {
+            if (adminCodeInput.value === ADMIN_CODE) {
+                loginScreen.classList.remove('active');
+                dashboardScreen.classList.add('active');
+                loadDashboard();
+            } else {
+                loginError.classList.remove('hidden');
+                setTimeout(() => loginError.classList.add('hidden'), 2000);
+            }
+        });
+
+        adminCodeInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') loginBtn.click();
+        });
+
+        // Logout
+        logoutBtn.addEventListener('click', () => {
+            dashboardScreen.classList.remove('active');
+            loginScreen.classList.add('active');
+            adminCodeInput.value = '';
+        });
+
+        // Question labels
+        const questionLabels = {
+            1: 'Is Joshua great?',
+            2: 'CDPC Puchong or Subang?',
+            3: 'Is Joshua good looking?',
+            4: 'Speak in tongues?',
+            5: 'Prophet or healer?'
+        };
+
+        const correctAnswers = {
+            1: 'yes',
+            2: 'CDPC Puchong',
+            3: 'yes',
+            4: 'yes',
+            5: 'healer'
+        };
+
+        let currentEntries = [];
+
+        // Load Dashboard Data
+        async function loadDashboard() {
+            let entries = [];
+
+            if (isJsonBinConfigured()) {
+                try {
+                    const response = await fetch(READ_URL(), {
+                        headers: getHeaders()
+                    });
+                    const data = await response.json();
+                    entries = data.record?.scores || [];
+                } catch (e) {
+                    console.error('JSONBin error:', e);
+                }
+            }
+
+            // Fallback to localStorage
+            const localData = JSON.parse(localStorage.getItem('joshuaLeaderboard') || '[]');
+            if (entries.length === 0) {
+                entries = localData;
+            }
+
+            currentEntries = entries;
+            renderDashboard(entries);
+        }
+
+        function renderDashboard(entries) {
+            // Stats
+            const totalPlayers = entries.length;
+            const scores = entries.map(e => e.score || 0);
+            const avgScore = totalPlayers > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / totalPlayers) : 0;
+            const highestScore = totalPlayers > 0 ? Math.max(...scores) : 0;
+            const maxPossibleScore = 100;
+            const perfectScores = scores.filter(s => s === maxPossibleScore).length;
+
+            document.getElementById('totalPlayers').textContent = totalPlayers;
+            document.getElementById('avgScore').textContent = avgScore;
+            document.getElementById('highestScore').textContent = highestScore;
+            document.getElementById('perfectScores').textContent = perfectScores;
+
+            // Detailed Cards
+            playerCards.innerHTML = '';
+            if (entries.length === 0) {
+                playerCards.innerHTML = '<p style="color: #666;">No data yet.</p>';
+            } else {
+                entries.forEach(entry => {
+                    const card = document.createElement('div');
+                    card.className = 'player-card';
+                    
+                    let answersHtml = '';
+                    for (let i = 1; i <= 5; i++) {
+                        const answer = entry.answers ? entry.answers[i] : null;
+                        const isCorrect = answer && answer.correct;
+                        const answerText = answer ? answer.answer : 'N/A';
+                        const correctText = correctAnswers[i];
+                        
+                        answersHtml += `
+                            <div class="answer-item">
+                                <span>${questionLabels[i]}</span>
+                                <span>
+                                    <span class="${isCorrect ? 'answer-correct' : 'answer-wrong'}">${answerText}</span>
+                                    ${!isCorrect ? ` (Correct: ${correctText})` : ''}
+                                </span>
+                            </div>
+                        `;
+                    }
+
+                    card.innerHTML = `
+                        <h3>
+                            <span>${escapeHtml(entry.name)}</span>
+                            <span class="player-score">${entry.score} pts</span>
+                        </h3>
+                        ${answersHtml}
+                    `;
+                    playerCards.appendChild(card);
+                });
+            }
+
+            // Summary Table
+            summaryBody.innerHTML = '';
+            entries.forEach(entry => {
+                const row = document.createElement('tr');
+                let cells = `<td>${escapeHtml(entry.name)}</td>`;
+                for (let i = 1; i <= 5; i++) {
+                    const answer = entry.answers ? entry.answers[i] : null;
+                    const isCorrect = answer && answer.correct;
+                    cells += `<td class="${isCorrect ? 'answer-correct' : 'answer-wrong'}">${isCorrect ? '✓' : '✗'}</td>`;
+                }
+                cells += `<td><strong>${entry.score}</strong></td>`;
+                row.innerHTML = cells;
+                summaryBody.appendChild(row);
+            });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function exportCSV(entries) {
+            let csv = 'Name,Q1 Answer,Q1 Correct,Q2 Answer,Q2 Correct,Q3 Answer,Q3 Correct,Q4 Answer,Q4 Correct,Q5 Answer,Q5 Correct,Total Score\n';
+            
+            entries.forEach(entry => {
+                const row = [escapeHtml(entry.name)];
+                for (let i = 1; i <= 5; i++) {
+                    const answer = entry.answers ? entry.answers[i] : null;
+                    row.push(answer ? answer.answer : 'N/A');
+                    row.push(answer && answer.correct ? 'Yes' : 'No');
+                }
+                row.push(entry.score);
+                csv += row.join(',') + '\n';
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'joshua-quiz-results.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        refreshBtn.addEventListener('click', loadDashboard);
+        exportBtn.addEventListener('click', () => exportCSV(currentEntries));
+    </script>
+</body>
+</html>
